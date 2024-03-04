@@ -4,8 +4,8 @@ const fs = require('fs');
 
 function convertMarkdownToHTML(markdown) {
   const formattedText = markdown
-    .replace(/(```\n)([^`]*)\1/g, (match, symbol, content) => content)
-    .replace(/(\*\*|_|`)([^ \n]+.*[^ \n]+)\1/g, (match, symbol, content) => content);
+    .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) => content)
+    .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) => content);
 
   return formattedText;
 }
