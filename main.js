@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+
 function convertMarkdownToHTML(markdown) {
   let html = '';
   const lines = markdown.split('\n');
@@ -13,3 +15,12 @@ function convertMarkdownToHTML(markdown) {
 
   return html;
 }
+
+fs.readFile('TextForTest.md', 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading file:', err);
+    return;
+  }
+
+  console.log(convertMarkdownToHTML(data));
+});
