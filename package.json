@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Vladyulik/Magic-Strings/issues"
   },
-  "homepage": "https://github.com/Vladyulik/Magic-Strings#readme"
+  "homepage": "https://github.com/Vladyulik/Magic-Strings#readme",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0"
+  }
 }
