@@ -2,6 +2,13 @@
 
 const fs = require('fs');
 
+const replacements = {
+  '**': (text) => `<b>${text}</b>`,
+  '_': (text) => `<i>${text}</i>`,
+  '`': (text) => `<tt>${text}</tt>`,
+  '```': (text) => `<pre>${text}</pre>`
+};
+
 function convertMarkdownToHTML(markdown) {
   const formattedText = markdown
     .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) => content)
