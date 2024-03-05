@@ -11,8 +11,12 @@ const replacements = {
 
 function convertMarkdownToHTML(markdown) {
   const formattedText = markdown
-    .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) => content)
-    .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) => content);
+    .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) =>
+      replacements[symbol](content)
+    )
+    .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) =>
+      replacements[symbol](content)
+    );
 
   return formattedText;
 }
