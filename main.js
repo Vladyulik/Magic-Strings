@@ -6,13 +6,13 @@ const replacements = {
   '**': (text) => `<b>${text}</b>`,
   '_': (text) => `<i>${text}</i>`,
   '`': (text) => `<tt>${text}</tt>`,
-  '```': (text) => `<pre>${text}</pre>`
+  '```': (text) => `<pre>\n${text}</pre>\n`
 };
 
 function convertMarkdownToHTML(markdown) {
   const formattedText = markdown
     .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) =>
-      replacements[symbol](content)
+      replacements[symbol.trim()](content)
     )
     .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) =>
       replacements[symbol](content)
