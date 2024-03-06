@@ -9,6 +9,19 @@ const replacements = {
   '```': (text) => `<pre>\n${text}</pre>\n`
 };
 
+function validateMarkdown(markdown) {
+  const badFormatting = {};
+
+  const nestedFormatting = [...markdown.matchAll(/(\*\*|_|`)(\*\*|_|`){1,}([^ \r\n]+.*[^ \r\n]+)\1/g)];
+
+  for (const instance of nestedFormatting) {
+    const [match] = instance;
+    badFormatting[match] = 'Nested formatting is not allowed';
+  }
+
+  return badFormatting;
+}
+
 function convertMarkdownToHTML(markdown) {
   const preformattedBlocks = {};
 
@@ -35,6 +48,13 @@ fs.readFile('TextForTest.md', 'utf8', (err, data) => {
   if (err) {
     console.error('Error reading file:', err);
     return;
+  }
+
+  const formattingErrors = validateMarkdown(data);
+  if (Object.keys(formattingErrors).length > 0) {
+    console.error('Error: invalid markdown <details are below>');
+    console.error(JSON.stringify(formattingErrors, null, 2));
+    process.exit(1);
   }
 
   console.log(convertMarkdownToHTML(data));
