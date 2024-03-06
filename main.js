@@ -19,6 +19,13 @@ function validateMarkdown(markdown) {
     badFormatting[match] = 'Nested formatting is not allowed';
   }
 
+  const endlessFormatting = [...markdown.matchAll(/(\*\*|_|`)[^ *_`\r\n]+(?!.*\1).*\r?\n/g)];
+
+  for (const instance of endlessFormatting) {
+    const [match] = instance;
+    badFormatting[match.trim()] = 'Endless formatting is not allowed';
+  }
+
   return badFormatting;
 }
 
