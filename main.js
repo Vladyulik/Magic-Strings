@@ -26,6 +26,13 @@ function validateMarkdown(markdown) {
     badFormatting[match.trim()] = 'Endless formatting is not allowed';
   }
 
+  const startlessFormatting = [...markdown.matchAll(/\n.*[^ *_`\r\n]+(\*\*|_|`) /g)];
+
+  for (const instance of startlessFormatting) {
+    const [match] = instance;
+    badFormatting[match.trim()] = 'Startless formatting is not allowed';
+  }
+
   return badFormatting;
 }
 
