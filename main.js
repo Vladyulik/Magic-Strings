@@ -25,7 +25,8 @@ function convertMarkdownToHTML(markdown) {
       replacements[symbol](content)
     )
     .replace(/\^\^PRE\^\^.+\^\^/g, (match) => preformattedBlocks[match]
-    );
+    )
+    .split(/\r?\n\r?\n/).map((paragraph) => `<p>${paragraph}</p>`).join('\n');
 
   return formattedText;
 }
