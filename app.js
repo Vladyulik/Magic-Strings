@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const { program } = require('commander');
 
 const replacements = {
   '**': (text) => `<b>${text}</b>`,
@@ -58,7 +59,16 @@ function convertMarkdownToHTML(markdown) {
   return formattedText;
 }
 
-fs.readFile('TextForTest.md', 'utf8', (err, data) => {
+program
+  .version('1.0.0')
+  .argument('<file>', 'Path to the input Markdown file')
+  .option('-o, --output <outputFile>', 'Path to the output HTML file')
+  .parse(process.argv);
+
+const inputFilePath = program.args[0];
+const outputFilePath = program.opts().output;
+
+fs.readFile(inputFilePath, 'utf8', (err, data) => {
   if (err) {
     console.error('Error reading file:', err);
     return;
@@ -71,5 +81,13 @@ fs.readFile('TextForTest.md', 'utf8', (err, data) => {
     process.exit(1);
   }
 
-  console.log(convertMarkdownToHTML(data));
+  const htmlContent = convertMarkdownToHTML(data);
+  if (outputFilePath) {
+    fs.writeFile(outputFilePath, htmlContent, (err) => {
+      if (err) {
+        console.error('Error writing to file:', err);
+        return;
+      }
+    });
+  } else console.log(htmlContent);
 });
