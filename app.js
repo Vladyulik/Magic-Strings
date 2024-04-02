@@ -63,10 +63,12 @@ program
   .version('1.0.0')
   .argument('<file>', 'Path to the input Markdown file')
   .option('-o, --output <outputFile>', 'Path to the output HTML file')
+  .option('-f, --format <format>', 'Format to which Markdown is converted')
   .parse(process.argv);
 
 const inputFilePath = program.args[0];
 const outputFilePath = program.opts().output;
+const conversionFormat = program.opts().format || (outputFilePath ? 'html' : 'ansi');
 
 fs.readFile(inputFilePath, 'utf8', (err, data) => {
   if (err) {
