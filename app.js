@@ -37,12 +37,12 @@ function validateMarkdown(markdown) {
   return badFormatting;
 }
 
-function convertMarkdownToHTML(markdown) {
+function convertMarkdown(markdown, conversionTable) {
   const preformattedBlocks = {};
 
   const formattedText = markdown
     .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) =>
-      replacements[symbol.trim()](content)
+      conversionTable[symbol.trim()](content)
     )
     .replace(/<pre>\n.*<\/pre>/gs, (match) => {
       const id = `^^PRE^^${Object.keys(preformattedBlocks).length}^^`;
@@ -50,7 +50,7 @@ function convertMarkdownToHTML(markdown) {
       return id;
     })
     .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) =>
-      replacements[symbol](content)
+      conversionTable[symbol](content)
     )
     .replace(/\^\^PRE\^\^.+\^\^/g, (match) => preformattedBlocks[match]
     )
@@ -83,7 +83,7 @@ fs.readFile(inputFilePath, 'utf8', (err, data) => {
     process.exit(1);
   }
 
-  const htmlContent = convertMarkdownToHTML(data);
+  const htmlContent = convertMarkdown(data, replacements);
   if (outputFilePath) {
     fs.writeFile(outputFilePath, htmlContent, (err) => {
       if (err) {
