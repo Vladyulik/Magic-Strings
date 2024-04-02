@@ -3,7 +3,7 @@
 const fs = require('fs');
 const { program } = require('commander');
 
-const replacements = {
+const htmlReplacements = {
   '**': (text) => `<b>${text}</b>`,
   '_': (text) => `<i>${text}</i>`,
   '`': (text) => `<tt>${text}</tt>`,
@@ -83,13 +83,13 @@ fs.readFile(inputFilePath, 'utf8', (err, data) => {
     process.exit(1);
   }
 
-  const htmlContent = convertMarkdown(data, replacements);
+  const formattedContent = convertMarkdown(data, htmlReplacements);
   if (outputFilePath) {
-    fs.writeFile(outputFilePath, htmlContent, (err) => {
+    fs.writeFile(outputFilePath, formattedContent, (err) => {
       if (err) {
         console.error('Error writing to file:', err);
         return;
       }
     });
-  } else console.log(htmlContent);
+  } else console.log(formattedContent);
 });
