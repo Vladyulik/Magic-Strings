@@ -90,7 +90,9 @@ fs.readFile(inputFilePath, 'utf8', (err, data) => {
     process.exit(1);
   }
 
-  const formattedContent = convertMarkdown(data, htmlReplacements);
+  const conversionTable = conversionFormat === 'html' ? htmlReplacements : ansiReplacements;
+
+  const formattedContent = convertMarkdown(data, conversionTable);
   if (outputFilePath) {
     fs.writeFile(outputFilePath, formattedContent, (err) => {
       if (err) {
