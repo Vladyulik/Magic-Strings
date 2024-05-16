@@ -3,11 +3,8 @@
 function convertMarkdown(markdown, conversionTable) {
   const preformattedBlocks = {};
 
-  const formattedText = markdown
-    .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) =>
-      conversionTable[symbol.trim()](content)
-    )
-    .replace(/<pre>\n.*<\/pre>/gs, (match) => {
+  let formattedText = markdown
+    .replace(/(```\r?\n)([^`]*)\1/gs, (match) => {
       const id = `^^PRE^^${Object.keys(preformattedBlocks).length}^^`;
       preformattedBlocks[id] = match;
       return id;
@@ -17,7 +14,16 @@ function convertMarkdown(markdown, conversionTable) {
     )
     .replace(/\^\^PRE\^\^.+\^\^/g, (match) => preformattedBlocks[match]
     )
-    .split(/\r?\n\r?\n/).map((paragraph) => `<p>${paragraph}</p>`).join('\n');
+    .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) =>
+      conversionTable[symbol.trim()](content)
+    );
+
+  if (conversionTable.type === 'html') {
+    formattedText = formattedText
+      .split(/\r?\n\r?\n/)
+      .map((paragraph) => `<p>${paragraph}</p>`)
+      .join('\n');
+  }
 
   return formattedText;
 }

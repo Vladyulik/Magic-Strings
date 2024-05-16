@@ -1,6 +1,7 @@
 'use strict';
 
 const htmlReplacements = {
+  type: 'html',
   '**': (text) => `<b>${text}</b>`,
   '_': (text) => `<i>${text}</i>`,
   '`': (text) => `<tt>${text}</tt>`,
@@ -8,6 +9,7 @@ const htmlReplacements = {
 };
 
 const ansiReplacements = {
+  type: 'ansi',
   '**': (text) => `\x1b[1m${text}\x1b[22m`,
   '_': (text) => `\x1b[3m${text}\x1b[23m`,
   '`': (text) => `\x1b[7m${text}\x1b[27m`,
