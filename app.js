@@ -2,9 +2,9 @@
 
 const fs = require('fs');
 const { program } = require('commander');
-const { validateMarkdown } = require('./validator.js');
-const { convertMarkdown } = require('./converter.js');
-const { htmlReplacements, ansiReplacements } = require('./textReplacements.js');
+const { validateMarkdown } = require('./src/validator.js');
+const { convertMarkdown } = require('./src/converter.js');
+const { htmlReplacements, ansiReplacements } = require('./src/textReplacements.js');
 
 program
   .version('1.0.0')
