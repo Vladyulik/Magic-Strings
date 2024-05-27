@@ -9,6 +9,9 @@ function convertMarkdown(markdown, conversionTable) {
       preformattedBlocks[id] = match;
       return id;
     })
+    .replace(/(\*\*|_|`)([^ \r\n]+)\1/g, (match, symbol, content) =>
+      conversionTable[symbol](content)
+    )
     .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) =>
       conversionTable[symbol](content)
     )
