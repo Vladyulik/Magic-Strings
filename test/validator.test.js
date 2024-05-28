@@ -2,38 +2,10 @@
 
 const { validateMarkdown } = require('../src/validator.js');
 
-const nestedFormattingText = `Hello!
-I am **_nested formatting_** :D
-Me **\`too\`** !
-And _**me**_ !
-_\`Same\`_ ...
-There \`**are lots of**\` us 0_0
-\`_True_\`
-Wait, **\`_Look at me!_\`**
-`;
-
-const endlessFormattingText = `Hi!
-I am **endless formatting :D
-Me \`too !
-And _me ...
-`;
-
-const startlessFormattingText = `Surprise_ !
-I am startless** formatting :D
-Me\` too !
-And me_ ...
-`;
-
-const correctText = `Wow!
-**bold** _italic_ \`monospaced\`
-_ ** \` — just regular symbols
-**_** is ok
-_**_ is also ok
-and this is \`**\` ok
-\`\`\`
-Preformatted text **He He**
-\`\`\`
-`;
+const { nestedFormattingText } = require('./res/texts.js');
+const { endlessFormattingText } = require('./res/texts.js');
+const { startlessFormattingText } = require('./res/texts.js');
+const { correctText } = require('./res/texts.js');
 
 describe('validator works correctly', () => {
   test('properly detects nested formatting', () => {
