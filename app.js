@@ -2,71 +2,20 @@
 
 const fs = require('fs');
 const { program } = require('commander');
-
-const replacements = {
-  '**': (text) => `<b>${text}</b>`,
-  '_': (text) => `<i>${text}</i>`,
-  '`': (text) => `<tt>${text}</tt>`,
-  '```': (text) => `<pre>\n${text}</pre>\n`
-};
-
-function validateMarkdown(markdown) {
-  const badFormatting = {};
-
-  const nestedFormatting = [...markdown.matchAll(/\s(\*\*|_|`)(\*\*|_|`){1,}([^ \r\n]+.*[^ \r\n]+)\1\s/g)];
-
-  for (const instance of nestedFormatting) {
-    const [match] = instance;
-    badFormatting[match.trim()] = 'Nested formatting is not allowed';
-  }
-
-  const endlessFormatting = [...markdown.matchAll(/\s(\*\*|_|`)[^ *_`\r\n]+(?!.*\1).*\r?\n/g)];
-
-  for (const instance of endlessFormatting) {
-    const [match] = instance;
-    badFormatting[match.trim()] = 'Endless formatting is not allowed';
-  }
-
-  const startlessFormatting = [...markdown.matchAll(/(^|\n)[^(**)(_)(`)]*[^ *_`\r\n](\*\*|_|`)\s/g)];
-
-  for (const instance of startlessFormatting) {
-    const [match] = instance;
-    badFormatting[match.trim()] = 'Startless formatting is not allowed';
-  }
-
-  return badFormatting;
-}
-
-function convertMarkdownToHTML(markdown) {
-  const preformattedBlocks = {};
-
-  const formattedText = markdown
-    .replace(/(```\r?\n)([^`]*)\1/g, (match, symbol, content) =>
-      replacements[symbol.trim()](content)
-    )
-    .replace(/<pre>\n.*<\/pre>/gs, (match) => {
-      const id = `^^PRE^^${Object.keys(preformattedBlocks).length}^^`;
-      preformattedBlocks[id] = match;
-      return id;
-    })
-    .replace(/(\*\*|_|`)([^ \r\n]+.*[^ \r\n]+)\1/g, (match, symbol, content) =>
-      replacements[symbol](content)
-    )
-    .replace(/\^\^PRE\^\^.+\^\^/g, (match) => preformattedBlocks[match]
-    )
-    .split(/\r?\n\r?\n/).map((paragraph) => `<p>${paragraph}</p>`).join('\n');
-
-  return formattedText;
-}
+const { validateMarkdown } = require('./src/validator.js');
+const { convertMarkdown } = require('./src/converter.js');
+const { htmlReplacements, ansiReplacements } = require('./src/textReplacements.js');
 
 program
   .version('1.0.0')
   .argument('<file>', 'Path to the input Markdown file')
   .option('-o, --output <outputFile>', 'Path to the output HTML file')
+  .option('-f, --format <format>', 'Format to which Markdown is converted')
   .parse(process.argv);
 
 const inputFilePath = program.args[0];
 const outputFilePath = program.opts().output;
+const conversionFormat = program.opts().format || (outputFilePath ? 'html' : 'ansi');
 
 fs.readFile(inputFilePath, 'utf8', (err, data) => {
   if (err) {
@@ -81,13 +30,15 @@ fs.readFile(inputFilePath, 'utf8', (err, data) => {
     process.exit(1);
   }
 
-  const htmlContent = convertMarkdownToHTML(data);
+  const conversionTable = conversionFormat === 'html' ? htmlReplacements : ansiReplacements;
+
+  const formattedContent = convertMarkdown(data, conversionTable);
   if (outputFilePath) {
-    fs.writeFile(outputFilePath, htmlContent, (err) => {
+    fs.writeFile(outputFilePath, formattedContent, (err) => {
       if (err) {
         console.error('Error writing to file:', err);
         return;
       }
     });
-  } else console.log(htmlContent);
+  } else console.log(formattedContent);
 });
